@@ -5,6 +5,7 @@ import { UserAuth } from 'src/entities/user/userAuth.entity';
 import { UserSession } from 'src/entities/user/userSession.entity';
 import { Stream } from '../streams/entities/stream.entity';
 import { StreamMessage } from '../realtime/entities/stream-message.entity';
+import { UserSubscriptionOrder } from 'src/entities/user/userSubscriptionOrder.entity';
 
 require('dotenv').config();
 
@@ -23,7 +24,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username,
   password,
   database,
-  entities: [User, Otp, UserAuth, UserSession, Stream, StreamMessage],
+  entities: [User, Otp, UserAuth, UserSession, Stream, StreamMessage, UserSubscriptionOrder],
   synchronize: sync,
 
   migrations: ['dist/config/migration/*.js'],
