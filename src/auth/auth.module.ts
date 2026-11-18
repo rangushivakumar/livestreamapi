@@ -6,9 +6,9 @@ import { AuthService } from './auth.service';
 import { User } from '../entities/user/user.entity';
 import { Otp } from '../entities/otp/otp.entity';
 import { UtilsService } from './utils.service';
-import { AdminModule } from 'src/admin/admin.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { UsersModule } from 'src/users/users.module';
 
 
 @Module({
@@ -17,10 +17,10 @@ import { JwtStrategy } from './jwt.strategy';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'changeme',
-      signOptions: { expiresIn: '15m' }, // access token only
+      signOptions: { expiresIn: '60m' }, // access token only
       global: true,
     }),
-    forwardRef(() => AdminModule),
+    UsersModule
   ],
   controllers: [AuthController],
   providers: [AuthService, UtilsService,JwtStrategy],

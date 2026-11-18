@@ -2,13 +2,17 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   Post,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { SignupDto, VerifyOtpDto } from './dto/signup.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RefreshTokenDto, SigninDto, SignupDto } from './dto/signup.dto';
+import { GetUser } from './get-user.decorator';
+import { User } from 'src/entities/user/user.entity';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -17,25 +21,49 @@ export class AuthController {
     private authService: AuthService,
   ) {}
 
-  @Post('signup')
+  @Post('/admin/streamer')
   async signup(
     @Body(new ValidationPipe()) body: SignupDto
   ) {
-    return this.authService.signup(body);
+    return this.authService.createStreamer(body);
   }
-
-  @Post('/verify-otp')
-  verifyOTP(@Body(ValidationPipe) verifyOtpDto: VerifyOtpDto) {
-    return this.authService.verifyOTP(verifyOtpDto);
-  }
-
 
   @Post('/signin')
-  signIn(
-    @Body(new ValidationPipe({ skipMissingProperties: true }))
-    signinDto: SignupDto,
+async signin(
+  @Body(new ValidationPipe()) body: SigninDto,
+) {
+  return this.authService.signin(body);
+}
+
+  @Post('/guest')
+  async guestSignup() {
+    return this.authService.guestSignup();
+  }
+
+  @Post('/google')
+  async googleSignup(
+    @Body("idToken") idToken: string
   ) {
-    return this.authService.signIn(signinDto);
+    return this.authService.googleSignup(idToken);
+  }
+
+  @Get('/sample')
+  @UseGuards(AuthGuard())
+  async guestsampledata() {
+    return "sample data for testing"
+  }
+
+  @Get('/me')
+  @UseGuards(AuthGuard())
+  async fetchCurrentUser(
+    @GetUser() user: User
+  ) {
+    return this.authService.fetchCurrentUser(user);
+  }
+
+  @Post('/refresh')
+  async refreshToken(@Body() dto: RefreshTokenDto) {
+    return this.authService.refreshToken(dto.refreshToken);
   }
 
 }

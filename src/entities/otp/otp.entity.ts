@@ -8,30 +8,31 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
+import { UserAuth } from '../user/userAuth.entity';
 
 @Entity()
 export class Otp extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  otp: string;
+  otp!: string;
 
-  @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user: User;
+  @ManyToOne(() => UserAuth,(userAuth) => userAuth.otp, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userAuthId' })
+  userAuth!: UserAuth;
 
-  @Column()
-  userId: number;
-
-  @Column({ type: 'datetime', nullable: true })
-  codeExpiry: Date;
+  @Column({ name: 'userAuthId'})
+  userAuthId!: number;
 
   @Column({ type: 'datetime', nullable: true })
-  nextOtp: Date;
+  codeExpiry!: Date;
+
+  @Column({ type: 'datetime', nullable: true })
+  nextOtp!: Date;
 
   @CreateDateColumn()
-  createdOn: Date;
+  createdOn!: Date;
 
   async setCodeExpiry(date: Date, minutes: number): Promise<void> {
     this.codeExpiry = new Date(date.getTime() + minutes * 60 * 1000);

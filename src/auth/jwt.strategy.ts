@@ -4,6 +4,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { UserRole } from 'src/entities/user/enums/user.enum';
 import { User } from 'src/entities/user/user.entity';
+import { UserAuth } from 'src/entities/user/userAuth.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -16,27 +17,36 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<User> {
-    const { email, mobile, role } = payload;
-  
+      console.log('JwtStrategy initialized');
+    const { email, mobile, role, id } = payload;
     if (
       role !== UserRole.SUPER_ADMIN &&
-      role !== UserRole.RESTAURANT_ADMIN
+      role !== UserRole.USER && role !== UserRole.STREAMER &&
+      role !== UserRole.ADMIN
     ) {
       throw new UnauthorizedException('Invalid role');
     }
   
-    let user: User | null = null;
+    let user;
+    let userAuth;
   
     if (email) {
-      user = await User.findOne({ where: { email } });
+      userAuth = await UserAuth.findOne({ where: { email } });
+      user = User.findOne({
+        where: {id: userAuth?.userId}
+      })
     } else if (mobile) {
-      user = await User.findOne({ where: { mobile } });
+      userAuth = await UserAuth.findOne({ where: { phoneNumber: mobile } });
+      user = User.findOne({
+        where: {id: userAuth?.userId}
+      })
+    } else if (id && role) {
+      user = User.findOne({ where: { id: id, role: role } })
     }
   
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-  
     return user;
   }
   

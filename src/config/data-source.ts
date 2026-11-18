@@ -1,12 +1,11 @@
 import { DataSourceOptions } from 'typeorm';
 import { User } from '../entities/user/user.entity';
 import { Otp } from '../entities/otp/otp.entity';
-import { Restaurant } from 'src/entities/restaurant/restaurant.entity';
-import { Category } from 'src/entities/restaurant/category.entity';
-import { MenuItem } from 'src/entities/restaurant/items.entity';
-import { SocialPlatforms } from 'src/entities/restaurant/socialPlatforms.entity';
-import { Waiter } from 'src/entities/restaurant/waiters.entity';
-import { Review } from 'src/entities/restaurant/review.entity';
+import { UserAuth } from 'src/entities/user/userAuth.entity';
+import { UserSession } from 'src/entities/user/userSession.entity';
+import { Stream } from '../streams/entities/stream.entity';
+import { StreamMessage } from '../realtime/entities/stream-message.entity';
+
 require('dotenv').config();
 
 const host = process.env.DB_HOST;
@@ -14,7 +13,8 @@ const port = process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306;
 const username = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
 const database = process.env.DB_NAME;
-const sync = process.env.DB_SYNC && process.env.DB_SYNC === 'true' ? true : false;
+const sync =
+  process.env.DB_SYNC && process.env.DB_SYNC === 'true' ? true : false;
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'mysql',
@@ -23,23 +23,13 @@ export const dataSourceOptions: DataSourceOptions = {
   username,
   password,
   database,
-  entities: [
-   User,
-   Otp,
-   Restaurant,
-   Category,
-   MenuItem,
-   SocialPlatforms,
-   Waiter,
-   Review
-  ],
+  entities: [User, Otp, UserAuth, UserSession, Stream, StreamMessage],
   synchronize: sync,
 
   migrations: ['dist/config/migration/*.js'],
 };
 
 // const dataSource = new DataSource(dataSourceOptions);
-
 
 // const initializeDataSource = async (
 //   retries: number,

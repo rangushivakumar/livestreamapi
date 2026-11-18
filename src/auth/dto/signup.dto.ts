@@ -1,46 +1,48 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, MinLength, MaxLength, IsIn } from "class-validator";
-import { LoginType, UserRole } from "src/entities/user/enums/user.enum";
+import { IsEmail, IsIn, IsNotEmpty, IsString } from "class-validator";
+import { UserRole } from "src/entities/user/enums/user.enum";
 
-export class SignupDto {
-  @IsEmail()
-  @IsOptional()
-  email:string;
-
-  @IsOptional()
+export class RefreshTokenDto {
   @IsString()
-  @Length(10, 15)
-  mobile: string;
-
   @IsNotEmpty()
-  @IsString()
-  @MinLength(8)
-  @MaxLength(32)
-  password: string;
-
-  @IsOptional()
-  userName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsIn([UserRole.SUPER_ADMIN, UserRole.RESTAURANT_ADMIN])
-  role: UserRole;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsIn([LoginType.email, LoginType.mobile])
-  loginType: LoginType;
+  refreshToken!: string;
 }
 
-export class VerifyOtpDto {
+export class googleLoginDto {
+  @IsString()
   @IsNotEmpty()
-  otp: string;
+  idToken!: string;
+}
 
-  @IsOptional()
-  email: string;
-
-  @IsOptional()
-  mobile: string;
-
+export class SignupDto {
+  @IsString()
   @IsNotEmpty()
-  role: UserRole;
+  displayName!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  email!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsIn([UserRole.STREAMER])
+  role!: UserRole;
+}
+
+export class SigninDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsIn([UserRole.STREAMER])
+  role!: UserRole;
 }
